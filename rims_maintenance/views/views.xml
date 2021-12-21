@@ -1,0 +1,144 @@
+<odoo>
+	<record id="maintenance_rims_form" model="ir.ui.view">
+		<field name="name">maintenance.rims.form</field>
+		<field name="model">maintenance.rims</field>    
+		<field name="arch" type="xml">        
+			<form string="Llantas">
+				<sheet>
+					<div class="oe_title">
+						<label for="equipment_id" class="oe_edit_only"/>
+						<h1><field name="equipment_id" string="Equipo"/></h1>
+						<!--<label for="name" class="oe_edit_only"/>
+						<h2><field name="name" string="Nombre"/></h2>-->
+					</div>
+					<group>
+						<group>
+							<field name="date_last"/>
+							<field name="date_next"/>
+							<!--<field name="revision_frequency"/>-->
+							<field name="marca"/>
+							<field name="modelo"/>
+							<field name="no_serie"/>
+							<field name="medida"/>
+						</group>
+						<group>
+							<field name="current_state"/>
+							<field name="tipo_renovado"/>
+							<field name="mil_orig"/>
+							<field name="mil_act"/>
+							<field name="presion"/>
+							<field name="position"/>
+							<field name="user_id"/>
+							<field name="company_id"/>
+						</group>
+					</group>							
+				</sheet>
+				<!-- Attachment preview 
+				<div class="o_attachment_preview" attrs="{'invisible': ['|',('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')),('state', '!=', 'draft')]}"/>-->
+				<!-- Chatter -->
+				<div class="oe_chatter">
+					<field name="message_follower_ids" groups="base.group_user"/>
+					<field name="activity_ids"/>
+					<field name="message_ids"/>
+				</div>
+			</form>
+		</field>    
+	</record>
+
+	<record model="ir.rule" id="record_shared_multi_company_rule">
+	    <field name="name">Shared Records:Rims</field>
+		<field name="model_id" ref="rims_maintenance.model_maintenance_rims"/>    
+		<field name="global" eval="True"/>    
+		<field name="domain_force">        ['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]    </field>
+	</record>
+
+	<record id="maintenance_rims_tree" model="ir.ui.view">
+		<field name="name">maintenance.rims.tree</field>
+		<field name="model">maintenance.rims</field>    
+		<field name="arch" type="xml">        
+			<tree string="Llantas">
+				<!--<field name="name"/>-->
+				<field name="equipment_id" readonly="1" />
+				<field name="date_last"/>
+				<field name="date_next"/>
+				<field name="marca"/>
+				<field name="modelo"/>
+				<field name="no_serie"/>
+				<field name="medida"/>
+				<field name="current_state"/>
+				<field name="tipo_renovado" optional="hide"/>
+				<field name="mil_orig"/>
+				<field name="mil_act"/>
+				<field name="presion"/>
+				<field name="position" optional="hide"/>
+				<field name="user_id" readonly="1"/>
+				<field name="company_id" optional="hide"/>
+				<!--<field name="revision_frequency" optional="hide"/>-->
+			</tree>
+		</field>    
+    </record>
+
+	<record id="action_maintenance_rims" model="ir.actions.act_window">
+		<field name="name">Control de Llantas</field>
+		<field name="res_model">maintenance.rims</field>
+		<field name="view_mode">list,form</field>
+	</record>
+	<menuitem
+		id="menu_maintenance_rims"
+		name="Control de Llantas"
+		parent="maintenance.menu_equipment_form"
+		action="action_maintenance_rims"
+		/>
+    
+	<record id="hr_equipment_view_form_inherit" model="ir.ui.view">
+		<field name="name">equipment.form.inherit</field>
+		<field name="model">maintenance.equipment</field>
+		<field name="inherit_id" ref="maintenance.hr_equipment_view_form"/> 
+		<field name="arch" type="xml">
+			<xpath expr="//div[@name='button_box']" position="inside">
+				<button 
+					type="object"
+					class="oe_stat_button"
+					context="{'default_company_id': company_id}"
+					icon="fa-life-ring"
+					name="action_view_rims">
+					<field string="Llantas" name="maintenance_rims_count" widget="statinfo"/>
+				</button>
+			</xpath>       
+			<notebook position="inside">
+				<page string="Datos de Poliza">
+					<group>
+						<group>
+							<field name="insurance_partner_id"/>
+							<field name="no_poliza"/>
+						</group>
+						<group>
+							<field name="inicio_periodo" widget="daterange" options="{'related_end_date': 'fin_periodo'}"/>
+							<field name="fin_periodo" widget="daterange" options="{'related_end_date': 'inicio_periodo'}"/>
+						</group>
+					</group>
+				</page>
+			</notebook>
+			<page name="product_information" position="inside">
+				<group>
+					<group>
+						<field name="marca"/>
+						<field name="placas"/>
+						<field name="color"/>
+						<field name="linea_tipo"/>
+					</group>
+					<group>
+						<field name="cilindros"/>
+						<field name="tipo_unidad"/>
+						<field name="cantidad_ejes"/>
+						<field name="no_eco"/>
+						<field name="no_motor"/>
+					</group>
+				</group>
+			</page>
+		</field>
+	</record>
+
+</odoo>
+
+

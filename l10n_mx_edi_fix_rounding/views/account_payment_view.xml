@@ -1,0 +1,12 @@
+<odoo>
+    <record model="ir.ui.view" id="payment_form_view_force_rounding">
+		<field name="name">payment.form.vie.force.rounding</field>
+		<field name="model">account.payment</field>
+		<field name="inherit_id" ref="account.view_account_payment_form"/>
+		<field name="arch" type="xml">
+			<field name="l10n_mx_edi_origin" position="after">				
+				<field name="force_rounding"/>
+			</field>
+		</field>
+	</record>
+</odoo>

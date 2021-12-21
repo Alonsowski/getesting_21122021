@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_invoices_payments_report" model="ir.ui.view">
+        <field name="name">view.dev.stock.card.form</field>
+        <field name="model">invoice.payment.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Reporte de Kardex">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="customer_ids" widget="many2many_tags" context="{'res_partner_search_mode': 'customer'}" attrs="{'invisible': [('partner_type', '!=', 'customer')]}"/>
+                            <field name="supplier_ids" widget="many2many_tags" context="{'res_partner_search_mode': 'supplier'}" attrs="{'invisible': [('partner_type', '=', 'customer')]}"/>
+                        </group>
+                        <group>
+                            <field name="end_date"/>
+                            <field name="partner_type" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="analytic_account_ids" string="Cuentas analíticas" widget="many2many_tags"/>
+                            <field name="sale_journals" widget="many2many_tags" attrs="{'invisible': [('partner_type', '!=', 'customer')]}"/>
+                            <field name="purchase_journals" widget="many2many_tags" attrs="{'invisible': [('partner_type', '=', 'customer')]}"/>
+                        </group>
+                        <group>
+                            <field name="payment_status" attrs="{'invisible': ['|',('pending_payment_filter', '=', True),('paid_invoices_filter', '=', True)]}"/>
+                            <field name="pending_payment_filter" attrs="{'invisible': ['|',('payment_status', '!=', False),('paid_invoices_filter', '=', True)]}"/>
+                            <field name="paid_invoices_filter" attrs="{'invisible': ['|',('payment_status', '!=', False),('pending_payment_filter', '=', True)]}"/>
+                            <field name="show_not_all_partners"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="print_pdf" string="PDF" type="object" class="btn-primary"/>
+                        <button string="Cancelar" class="btn-default" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_invoices_payments_report_client_wizard" model="ir.actions.act_window">
+        <field name="name">Facturas y pagos</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">invoice.payment.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_partner_type': 'customer'}</field>
+    </record>
+    <record id="action_invoices_payments_report_provider_wizard" model="ir.actions.act_window">
+        <field name="name">Facturas y pagos</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">invoice.payment.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_partner_type': 'supplier'}</field>
+    </record>
+        
+    <menuitem
+        id="menu_clients_invoices_payments_report"
+        name="Estado de Cuentas de Clientes"
+        parent="account_reports.account_reports_partners_reports_menu"
+        action="action_invoices_payments_report_client_wizard"
+        />
+
+    <menuitem
+        id="menu_providers_invoices_payments_report"
+        name="Estado de Cuentas de Proveedores"
+        parent="account_reports.account_reports_partners_reports_menu"
+        action="action_invoices_payments_report_provider_wizard"
+        />
+
+    <record model="ir.actions.server" id="server_action_invoices_payments_client_report">
+        <field name="name">Estado de cuenta Cliente</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_type">action</field>
+        <field name="state">code</field>
+        <field name="code">
+            action = {
+                "type": "ir.actions.act_window",
+                "view_mode": "form",
+                "res_model": "invoice.payment.wizard",
+                "target": "new",
+                "context": {
+                    'default_partner_type': 'customer',
+                    'default_customer_ids': records.ids,
+                }
+            }
+        </field>
+    </record>
+    <record model="ir.actions.server" id="server_action_invoices_payments_provider_report">
+        <field name="name">Estado de cuenta Proveedor</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_type">action</field>
+        <field name="state">code</field>
+        <field name="code">
+            action = {
+                "type": "ir.actions.act_window",
+                "view_mode": "form",
+                "res_model": "invoice.payment.wizard",
+                "target": "new",
+                "context": {
+                    'default_partner_type': 'supplier',
+                    'default_supplier_ids': records.ids,
+                }
+            }
+        </field>
+    </record>
+</odoo>

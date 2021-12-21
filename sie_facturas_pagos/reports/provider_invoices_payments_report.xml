@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<record id="provider_invoices_payments_report" model="ir.actions.report">
+		<field name="name">Estado de cuenta de Proveedor</field>
+		<field name="model">invoice.payment.wizard</field>
+		<field name="report_type">qweb-pdf</field>
+		<field name="report_name">sie_facturas_pagos.provider_invoices_payments_template</field>
+		<field name="report_file">sie_facturas_pagos.provider_invoices_payments_template</field>
+		<field name="paperformat_id" ref="sie_facturas_pagos.invoices_payments_report_paperformat" />
+	</record>
+
+	<template id="provider_invoices_payments_template">
+	    <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+
+                	<style>
+                		table {
+						  border-collapse: collapse;
+						  font-size: 10px;
+						}
+						th,td {
+						  border: 1px solid #cecfd5;
+						  padding: 5px;
+						}
+
+						.si_fi {
+							background-color: #95A5A6;
+						}
+
+						.alnright { text-align: right; }
+						.alncenter { text-align: center; }
+
+						thead { display: table-header-group }
+						tfoot { display: table-row-group }
+						tr { page-break-inside: avoid }
+
+                	</style>
+					<br/><br/>
+					<h2>REPORTE DE ESTADO DE CUENTAS DE PROVEEDOR</h2>
+                    <table width="100%">
+                    	<tbody>
+                    		<tr>
+                    			<td style="border-top: 0; border-right: 0; border-left: 0;">Fecha de inicio: <span t-esc="data['start']"/></td>
+                    			<td style="border-top: 0; border-right: 0; border-left: 0;">Fecha de fin: <span t-esc="data['end']"/></td>
+                    			<td style="border-top: 0; border-right: 0; border-left: 0;">Diario: <span t-esc="data['journals']"/></td>
+                    			<td style="border-top: 0; border-right: 0; border-left: 0;">Estado del pago: <span t-esc="data['payment_filters']"/></td>
+                    			<td style="border-top: 0; border-right: 0; border-left: 0;">Cuentas analíticas: <span t-esc="data['analytic_accounts']"/></td>
+                    		</tr>                    		
+                    	</tbody>
+                    </table>
+                    <t t-foreach="data['partners']" t-as="partner">
+					<t t-if="partner['invoices'] or not data['not_show_all']">
+						<table width="100%">
+							<tbody>
+								<tr>
+									<td style="border: 0;" colspan="5">Proveedor: <span t-esc="partner['partner_name']"/></td>
+								</tr>
+								<tr>
+									<td style="border: 0;" colspan="5">Dirección: <span t-esc="partner['partner_address']"/></td>
+								</tr>
+								<tr>
+									<td style="border: 0;">Ciudad: <span t-esc="partner['partner_city']"/></td>
+									<td style="border: 0;">Estado: <span t-esc="partner['partner_state']"/></td>
+									<td style="border: 0;">País: <span t-esc="partner['partner_country']"/></td>
+									<td style="border: 0;">RFC: <span t-esc="partner['partner_rfc']"/></td>									
+									<t t-foreach="partner['currencies']" t-as="k">
+										<td style="border: 0;">Saldo en <span t-esc="k"/></td>
+									</t>
+								</tr>
+								<tr>
+									<td style="border: 0;" colspan="4"></td>								
+									<t t-foreach="partner['currencies'].values()" t-as="c">
+										<td style="border: 0;">
+											<span t-esc="float(c)" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+										</td>
+									</t>
+								</tr> 
+							</tbody>
+						</table>
+						<table width="100%">
+							<thead>
+								<tr>
+									<th style="border: 0; width: 12%;">FACTURA</th>
+									<th style="border: 0; width: 12%;">REFERENCIA</th>
+									<th style="border: 0; width: 10%;">REF. FACTURA</th>
+									<th style="border: 0; width: 12%;">REF. PAGO</th>
+									<th style="border: 0; width: 8%;">FECHA</th>
+									<th style="border: 0; width: 8%;">VENCIMIENTO</th>
+									<th style="border: 0; width: 8%;">CUENTA ANALÍTICA</th>
+									<th style="border: 0; width: 10%;">DIARIO</th>
+									<th style="border: 0; width: 10%;">ESTADO DE PAGOS</th>
+									<th style="border: 0; width: 10%;">MONTO</th>
+								</tr>
+							</thead>
+							<tbody>
+						<t t-foreach="partner['invoices']" t-as="invoice">
+								<tr>
+									<td><span t-esc="invoice['invoice_name']"/></td>
+									<td><span t-esc="invoice['invoice_name']"/></td>
+									<td><span t-esc="invoice['invoice_ref']"/></td>
+									<td><span t-esc="invoice['invoice_pay_ref']"/></td>
+									<td><span t-esc="invoice['invoice_date']"/></td>
+									<td><span t-esc="invoice['invoice_due']"/></td>
+									<td><span t-esc="invoice['invoice_analytic']"/></td>
+									<td><span t-esc="invoice['invoice_journal']"/></td>
+									<td><span t-esc="invoice['invoice_state']"/></td>
+									<td><span t-esc="invoice['invoice_amount']" t-options="{'widget': 'monetary', 'display_currency': currency}"/></td>
+								</tr>
+								<t t-foreach="invoice['payments']" t-as="payment">									
+									<tr>
+										<td></td>
+										<td><span t-esc="payment['ref']"/></td>
+										<td></td>
+										<td></td>
+										<td><span t-esc="payment['date']"/></td>
+										<td></td>
+										<td><span t-esc="payment['analytic']"/></td>
+										<td><span t-esc="payment['journal_name']"/></td>
+										<td></td>
+										<td><span t-esc="payment['amount']" t-options="{'widget': 'monetary', 'display_currency': currency}"/></td>
+									</tr>
+								</t>
+								<tr>
+									<td colspan="8"></td>
+									<td>Saldo Factura: </td>
+									<td><span t-esc="round(invoice['total'], 2)" t-options="{'widget': 'monetary', 'display_currency': currency}"/>(<span t-esc="invoice['invoice_currency']"/>)</td>
+								</tr>
+                    	</t>
+							</tbody>
+						</table>
+						<br/>
+					<br/><br/>
+                    </t>
+                    </t>
+                </div>
+            </t>
+	    </t>
+	</template>
+</odoo>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<odoo>
+    <menuitem
+        id="menu_clients_invoices_payments_report"
+        name="Estado de Cuentas de Clientes"
+        parent="account_reports.account_reports_partners_reports_menu"
+        action="action_sale_daybook_report_product_category"
+        />
+
+    <menuitem
+        id="menu_providers_invoices_payments_report"
+        name="Estado de Cuentas de Proveedores"
+        parent="account_reports.account_reports_partners_reports_menu"
+        action="action_sale_daybook_report_product_category"
+        />
+</odoo>

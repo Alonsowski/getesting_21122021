@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.actions.server" id="fix_analytic_accounts">
+        <field name="name">Corrección Analítica</field>
+        <field name="model_id" ref="model_account_move"/>
+        <field name="binding_type">action</field>        
+        <field name="state">code</field>
+        <field name="code">
+            records.fix_analytic_accounts()
+        </field>
+    </record>
+</odoo>

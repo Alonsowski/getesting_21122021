@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="journal_entry_template_report_view">
+        <t t-call="web.external_layout">
+            <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>
+            <t t-set="cfdi_vals" t-value="o._l10n_mx_edi_decode_cfdi()"/>
+            <div class="page">
+                <style>
+                    th, td { 
+                            display: inline-block;
+                    td { 
+                        font-size: 10px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                    td { 
+                        font-size: 12px;
+                    }
+                </style>
+                <br/><br/>
+                <div class="oe_structure"/>
+                <div>
+                    <h3 class="text-center mb32">
+                        <strong>Asiento Contable</strong>
+                    </h3>
+                </div>
+
+                <br/>
+                <div class="row" id="journal_information" style="font-size: 18px;">
+                    <div class="col-6">
+                        <div>
+                            <strong>Folio :</strong>
+                            <p t-field="o.name"/>
+                        </div>
+
+                        <div class="text-left">
+                            <strong>Fecha :</strong>
+                            <p t-field="o.date"/>
+                        </div>
+                        <div>
+                            <strong>Folio Fiscal :</strong>
+                            <p t-field="o.l10n_mx_edi_cfdi_uuid"/>
+                        </div>
+                        <div>
+                            <p t-field="o.l10n_mx_validate_uuid"/>
+                        </div>
+                    </div>  
+        
+                    <div class="col-6">
+                        <div>
+                            <strong>Diario :</strong>
+                            <p t-field="o.journal_id"/>
+                        </div>
+                        <div class="text-left">
+                            <strong t-if="o.ref" >Referencia :</strong>
+                            <p t-field="o.ref"/>
+                        </div>
+                        <div class="text-left">
+                            <strong t-if="cfdi_vals.get('tipo_cambio')">Tipo de Cambio :</strong>
+                            <p><span t-esc="cfdi_vals.get('tipo_cambio')"/></p>
+                        </div>
+                        <div class="text-left">
+                        </div>
+                    </div> 
+                </div>
+        
+
+                <br/><br/>
+                <table style="border-collapse: collapse;width: 100%;font-size: 10px;" class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%">Contacto</th>
+                            <th style="width: 13%">Cuenta</th>
+                            <th style="width: 16%">Descripción</th>
+                            <th style="width: 9%">Fecha de Vencimiento</th>
+                            <th style="width: 12%">Cuenta Analítica</th>
+                            <th style="width: 9%">Impuestos(%)</th>
+                            <th style="width: 10%">Importe Moneda</th>
+                            <th style="width: 10%">Débito</th>
+                            <th style="width: 10%">Crédito</th>
+                        </tr>
+                    </thead>  
+                    <tbody class="consumed_tbody">
+                        <t t-set="total" t-value="0.0"/>
+                        <t t-set="total1" t-value="0.0"/>
+                        <t t-foreach="o.line_ids" t-as="line">    
+                        <tr>
+                            <td style="width: 10%">
+                                <span t-field="line.partner_id" />
+                            </td>
+                            <td style="width: 13%">
+                                <span t-field="line.account_id" />
+                            </td>
+                            <td style="width: 16%">
+                                <span t-field="line.name" />
+                            </td>
+                            <td style="width: 9%">
+                                <span t-field="line.date_maturity" />
+                            </td>
+                            <td style="width: 12%">
+                                <span t-field="line.analytic_account_id" />
+                            </td>
+                            <td style="width: 9%">
+                                <span t-field="line.tax_ids" />
+                            </td>
+                            <td style="width: 10%">
+                                <span t-field="line.amount_currency" />
+                            </td>
+                            <td style="width: 10%">
+                                <span t-field="line.debit" />
+                            </td>
+                            <td style="width: 10%">
+                                <span t-field="line.credit" />
+                            </td>
+                        </tr>
+                        <t t-set="total" t-value="total + line.debit"/>
+                        <t t-set="total1" t-value="total1 + line.credit"/>
+                        </t>
+                        <tr>
+                            <td colspan="6" style="width: 70%"></td>
+                            <td><strong>Total:</strong></td>
+                            <td><strong>
+                                <span><t t-esc="total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></span>
+                            </strong></td>
+                            <td><strong>
+                                <span><t t-esc="total1" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></span>
+                            </strong></td>
+                    </tr>
+                    </tbody>
+                </table>
+            
+            </div>
+        </t>
+    </template>
+
+    <template id="journal_entry_report_template_id">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="bi_print_journal_entries.journal_entry_template_report_view"  t-lang="o.partner_id.lang" />
+            </t>
+        </t>
+    </template>
+
+</odoo>

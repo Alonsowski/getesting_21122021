@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+    <record id="rims_email_alert_template" model="mail.template">
+        <field name="name">Rims Alert</field>
+        <field name="model_id" ref="rims_maintenance.model_maintenance_rims"/>
+        <field name="auto_delete" eval="True"/>
+        <field name="email_from">${object.company_id.email}</field>
+        <field name="email_to">${object.user_id.email}</field>
+        <field name="subject">Revisión de llanta de vehículo ${object.equipment_id.name}/${object.equipment_id.no_eco} por expirar</field>
+        <field name="body_html">
+            <![CDATA[
+            <p>Estimado/a ${object.user_id.name},
+            <br/>
+            <br/>
+            Se le comunica que el mantenimiento "${object.equipment_id.name}/${object.equipment_id.no_eco} " está próximo a expirar<br/>
+            </p>
+            Saludos,<br/>
+            ${object.company_id.name} ]]>
+        </field>
+    </record>
+
+    <record id="period_email_alert_template" model="mail.template">
+        <field name="name">Period Alert</field>
+        <field name="model_id" ref="maintenance.model_maintenance_equipment"/>
+        <field name="auto_delete" eval="True"/>
+        <field name="email_from">${object.company_id.email}</field>
+        <field name="email_to">${object.technician_user_id.email}</field>
+        <field name="subject">Periodo fiscal de equipo ${object.name} por expirar</field>
+        <field name="body_html">
+            <![CDATA[
+            <p>Estimado/a ${object.technician_user_id.name},
+            <br/>
+            <br/>
+            Se le comunica que el periodo fiscal del equipo "${object.name}" está próximo a expirar<br/>
+            </p>
+            Saludos,<br/>
+            ${object.company_id.name} ]]>
+        </field>
+    </record>
+</odoo>
