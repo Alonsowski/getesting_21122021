@@ -194,6 +194,7 @@ class MaintenanceEquipment(models.Model):
 
     def name_get(self):
         result = []
+        # Add serial_no to name_get
         for record in self:
             if record.name and record.serial_no and record.no_eco:
                 result.append((record.id, record.name + '/' + record.serial_no + '/' + record.no_eco))
