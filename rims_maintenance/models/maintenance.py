@@ -139,8 +139,7 @@ class MaintenanceEquipment(models.Model):
 
 
     maintenance_rims_count = fields.Integer(compute='_compute_maintenance_rims_count', string="Maintenance Count Rims", store=True)
-    maintenance_rims_ids = fields.One2many('maintenance.rims','equipment_id', copy=False)
-    
+    maintenance_rims_ids = fields.One2many('maintenance.rims','equipment_id', copy=False)    
     tu_list = [
         ('tracto', 'Tractocamion'),
         ('gon2', 'Gondola 2 ejes'),
