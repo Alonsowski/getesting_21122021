@@ -1,4 +1,0 @@
-[submodule "SIE-Center/Grupo_Escudero"]
-	path = SIE-Center/Grupo_Escudero
-	url = git@github.com:SIE-Center/Grupo_Escudero.git
-	branch = avgcost
